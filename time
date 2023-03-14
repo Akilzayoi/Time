@@ -1,0 +1,14 @@
+#include <iostream>
+#include <ctime>
+#include <chrono>
+
+int main()
+{
+    // 获取当前系统时间点
+    auto now = std::chrono::system_clock::now();
+    // 转换为time_t类型
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+    // 格式化输出
+    std::cout << "Current time: " << std::ctime(&t) << '\n';
+    return 0;
+}
