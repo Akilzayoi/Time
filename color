@@ -1,0 +1,69 @@
+#include <iostream>
+#include <string>
+#include <chrono>
+#include <thread>
+#include <cstdlib>
+#include <ctime>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
+// 随机生成颜色代码
+int randomColor() {
+    int color = rand() % 8 + 30;
+    if (color == 33) color = 91;
+    else if (color == 34) color = 94;
+    else if (color == 35) color = 95;
+    else if (color == 36) color = 96;
+    return color;
+}
+
+// 控制台打印时间
+void printTime() {
+    // 获取当前时间
+    auto now = std::chrono::system_clock::now();
+    std::time_t time = std::chrono::system_clock::to_time_t(now);
+
+    // 随机生成颜色
+    int color = randomColor();
+
+    // 设置控制台颜色
+#ifdef _WIN32
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+#else
+    std::cout << "\033[" << color << "m";
+#endif
+
+    // 打印时间
+    std::string timeStr = std::ctime(&time);
+    timeStr.pop_back(); // 移除末尾的换行符
+    std::cout << timeStr;
+
+    // 恢复控制台颜色
+#ifdef _WIN32
+    SetConsoleTextAttribute(hConsole, 7);
+#else
+    std::cout << "\033[0m";
+#endif
+}
+
+int main() {
+    // 设置随机种子
+    std::srand(std::time(nullptr));
+
+    // 每秒刷新一次时间
+    while (true) {
+        printTime();
+#ifdef _WIN32
+        Sleep(1000);
+#else
+        sleep(1);
+#endif
+    }
+
+    return 0;
+}
