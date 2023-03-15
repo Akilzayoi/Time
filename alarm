@@ -1,0 +1,57 @@
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <string>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
+using namespace std;
+
+// 播放音乐
+void playMusic() {
+    cout << "播放音乐......" << endl;
+    // 这里可以使用第三方库来播放音乐
+}
+
+int main() {
+    // 设置闹钟时间
+    int hour = 0, minute = 0;
+    cout << "请输入小时数：";
+    cin >> hour;
+    cout << "请输入分钟数：";
+    cin >> minute;
+
+    // 当前时间
+    auto now = chrono::system_clock::now();
+    time_t time_now = chrono::system_clock::to_time_t(now);
+    tm* time_info = localtime(&time_now);
+
+    // 设置闹钟时间
+    time_info->tm_hour = hour;
+    time_info->tm_min = minute;
+    time_info->tm_sec = 0;
+
+    // 等待闹钟时间到来
+    while (true) {
+        now = chrono::system_clock::now();
+        time_now = chrono::system_clock::to_time_t(now);
+        tm* now_info = localtime(&time_now);
+        if (now_info->tm_hour == time_info->tm_hour && now_info->tm_min == time_info->tm_min) {
+            break;
+        }
+#ifdef _WIN32
+        Sleep(1000);
+#else
+        sleep(1);
+#endif
+    }
+
+    // 播放音乐
+    playMusic();
+
+    return 0;
+}
